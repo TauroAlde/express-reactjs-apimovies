@@ -1,25 +1,26 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const request = require('request')
+const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 
-request( 
-  'https://api.themoviedb.org/4/list/1?api_key=c129d30e9f7745dc2daac8fefc1c81bc', 
-  function(error, response, body){
-  if(error){
-    console.log(error)
-    console.log(body)
-  }else{
-    console.log(response)
-    console.log(body)
-  }
-})
+const PORT_LOCAL = 5000;
+const REDIS_PORT = 6379;
 
-// app.get('/api.themoviedb.org/3/movie/550?api_key=c129d30e9f7745dc2daac8fefc1c81bc', (req, res) => {
-//   return res;
-// });
+//setting
+app.set('port', process.env.PORT || PORT_LOCAL);
 
-const port = 5000;
+//Midelware
+app.use(morgan('dev'));
+app.use(express.json());
 
-app.listen(port,() => console.log(`el server inicioara en el peurto ${port}`));
+//router
+app.use('/api/movies', require('./routes/routes'));
+
+//static files
+app.use(express.static(path.join(__dirname,'movie_app', 'public')))
+
+//server start
+app.listen(app.get('port'),() => {
+  console.log(`server on port ${app.get('port')} `)
+});
