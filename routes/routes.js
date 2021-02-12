@@ -18,15 +18,12 @@ router.get('/' , async (req, res, next) => {
   try {
     const reply = await GET_ASYNC('movies');
     if(reply){
-      // console.log(reply);
-      console.log('using cache')
-      res.send(JSON.parse(reply))
-      return
+      return res.send(JSON.parse(reply))
     }
     const response = await axios.get('https://api.themoviedb.org/4/list/1?api_key=c129d30e9f7745dc2daac8fefc1c81bc');
     const saveResult = await SET_ASYNC('movies', JSON.stringify(response.data.results));
-    console.log('new data cachet');
-    res.send(saveResult);
+    console.log('new data cachet', saveResult);
+    res.send(response.data.results);
   } catch (error) {
     res.send(error.message)
   }
